@@ -3,6 +3,22 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\BukuController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\AnggotaController;
+use App\Http\Controllers\PeminjamanController;
+
+
+Auth::routes();
+
+Route::group(['middleware' => 'auth'], function () {
+    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    Route::resource('/admin',   App\Http\Controllers\AdminController::class);
+    Route::resource('/anggota', App\Http\Controllers\AnggotaController::class);
+    Route::resource('buku', BukuController::class);
+    Route::resource('kategori', KategoriController::class);
+    Route::resource('peminjaman', PeminjamanController::class);
 });
+
