@@ -69,12 +69,12 @@
                 {{-- NO TELP --}}
                 <div class="mb-3">
                     <label class="form-label">No Telepon</label>
-                    <input type="text" name="no_telp" 
-                        value="{{ old('no_telp') }}" 
-                        class="form-control @error('no_telp') is-invalid @enderror"
+                    <input type="text" name="no_telepon" 
+                        value="{{ old('no_telepon') }}" 
+                        class="form-control @error('no_telepon') is-invalid @enderror"
                         placeholder="Masukkan nomor telepon">
 
-                    @error('no_telp')
+                    @error('no_telepon')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>

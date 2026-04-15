@@ -25,10 +25,10 @@ class AnggotaController extends Controller
     {
         $request->validate([
             'nama' => 'required',
-            'nis_nim' => 'required|unique:anggota,nis',
+            'nis_nim' => 'required|unique:anggota,nis_nim',
             'kelas' => 'required',
             'alamat' => 'required',
-            'no_telp' => 'required'
+            'no_telepon' => 'required'
         ]);
 
         Anggota::create($request->all());
@@ -44,39 +44,45 @@ class AnggotaController extends Controller
         return view('pages.anggota.show', compact('anggota'));
     }
 
-    // 🔹 FORM EDIT
-    public function edit(string $id)
-    {
-        $anggota = Anggota::findOrFail($id);
-        return view('anggota.edit', compact('anggota'));
-    }
+  // 🔹 FORM EDIT
+public function edit(string $id)
+{
+    $anggota = Anggota::findOrFail($id);
+    return view('pages.anggota.edit', compact('anggota'));
+}
 
-   
-    public function update(Request $request, string $id)
-    {
-        $anggota = Anggota::findOrFail($id);
+// 🔹 UPDATE DATA
+public function update(Request $request, string $id)
+{
+    $anggota = Anggota::findOrFail($id);
 
-        $request->validate([
-            'nama' => 'required',
-            'nis' => 'required|unique:anggota,nis,' . $id,
-            'kelas' => 'required',
-            'alamat' => 'required',
-            'no_telp' => 'required'
-        ]);
+    $request->validate([
+        'nama' => 'required',
+        'nis_nim' => 'required|unique:anggota,nis_nim,' . $id,
+        'kelas' => 'required',
+        'alamat' => 'required',
+        'no_telepon' => 'required'
+    ]);
 
-        $anggota->update($request->all());
+    $anggota->update([
+        'nama' => $request->nama,
+        'nis_nim' => $request->nis_nim,
+        'kelas' => $request->kelas,
+        'alamat' => $request->alamat,
+        'no_telepon' => $request->no_telepon,
+    ]);
 
-        return redirect()->route('anggota.index')
-            ->with('success', 'Data anggota berhasil diupdate');
-    }
-
+    return redirect()->route('anggota.index')
+        ->with('success', 'Data anggota berhasil diupdate');
+}
     
-    public function destroy(string $id)
-    {
-        $anggota = Anggota::findOrFail($id);
-        $anggota->delete();
+     public function destroy(string $id)
+{
+    $anggota = Anggota::findOrFail($id);
 
-        return redirect()->route('anggota.index')
-            ->with('success', 'Data anggota berhasil dihapus');
-    }
+    $anggota->delete();
+
+    return redirect()->route('anggota.index')
+        ->with('success', 'Data anggota berhasil dihapus');
+}
 }

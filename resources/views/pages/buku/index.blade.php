@@ -1,15 +1,15 @@
 @extends('layouts.app')
 
-@section('title', 'Data Anggota')
+@section('title', 'Data Buku')
 
 @section('content')
 
 <div class="pt-2 pb-4">
-    <h3 class="fw-bold mb-3">Data Anggota</h3>
+    <h3 class="fw-bold mb-3">Data Buku</h3>
 </div>
 
-<a href="{{ route('anggota.create') }}" class="btn btn-primary mb-3">
-    <span class="fas fa-plus"></span> Tambah Anggota
+<a href="{{ route('buku.create') }}" class="btn btn-primary mb-3">
+    <span class="fas fa-plus"></span> Tambah Buku
 </a>
 
 <div class="card card-body">
@@ -18,48 +18,62 @@
             <thead>
                 <tr>
                     <th>No</th>
-                    <th>Nama</th>
-                    <th>NIS</th>
-                    <th>Kelas</th>
-                    <th>No Telp</th>
+                    <th>Kode Buku</th>
+                    <th>Judul</th>
+                    <th>Kategori</th>
+                    <th>Penulis</th>
+                    <th>Tahun</th>
+                    <th>Stok</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
 
             <tbody>
-                @foreach ($anggota as $item)
+                @foreach ($buku as $item)
                 <tr>
                     <td>{{ $loop->iteration }}</td>
-                    <td>{{ $item->nama }}</td>
-                    <td>{{ $item->nis_nim }}</td>
-                    <td>{{ $item->kelas }}</td>
-                    <td>{{ $item->no_telepon }}</td>
+                    <td>{{ $item->kode_buku }}</td>
+                    <td>{{ $item->judul }}</td>
+                    <td>{{ $item->kategori->nama_kategori ?? '-' }}</td>
+                    <td>{{ $item->penulis }}</td>
+                    <td>{{ $item->tahun_terbit }}</td>
+                    <td>
+                        @if ($item->stok > 0)
+                            <span class="badge bg-success">Tersedia ({{ $item->stok }})</span>
+                        @else
+                            <span class="badge bg-danger">Habis</span>
+                        @endif
+                    </td>
+
                     <td>
 
-                        <a href="{{ route('anggota.show', $item->id) }}" 
+                        <a href="{{ route('buku.show', $item->id) }}" 
                            class="btn text-info btn-link py-0 px-2 text-decoration-none">
                             <span class="fas fa-eye"></span> Detail
                         </a>
 
-                        <a href="{{ route('anggota.edit', $item->id) }}" 
+                        <a href="{{ route('buku.edit', $item->id) }}" 
                            class="btn text-primary btn-link py-0 px-2 text-decoration-none">
                             <span class="fas fa-edit"></span> Edit
                         </a>
 
-                           <form action="{{ route('anggota.destroy', $item->id) }}" method="POST" style="display:inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" onclick="return confirm('Yakin mau hapus?')" style="color:red; border:none; background:none;">
-                                                Hapus
-                                            </button>
-                                        </form>
+                        <form action="{{ route('buku.destroy', $item->id) }}" method="POST" style="display:inline;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" 
+                                onclick="return confirm('Yakin mau hapus?')" 
+                                style="color:red; border:none; background:none;">
+                                Hapus
+                            </button>
+                        </form>
+
                     </td>
                 </tr>
                 @endforeach
 
-                @if($anggota->isEmpty())
+                @if($buku->isEmpty())
                 <tr>
-                    <td colspan="6" class="text-center">Data kosong</td>
+                    <td colspan="8" class="text-center">Data kosong</td>
                 </tr>
                 @endif
 

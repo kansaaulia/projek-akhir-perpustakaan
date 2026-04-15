@@ -13,6 +13,6 @@ class Anggota extends Model
         'nis_nim',
         'kelas',
         'alamat',
-        'no_telp'
+        'no_telepon'
     ];
 }
