@@ -28,7 +28,16 @@
             <ul class="dropdown-menu dropdown-menu-end">
                 <li><a class="dropdown-item" href="#">Profile</a></li>
                 <li><hr></li>
-                <li><a class="dropdown-item" href="#">Logout</a></li>
+               <li>
+    <a class="dropdown-item" href="#"
+       onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+        Logout
+    </a>
+
+    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+        @csrf
+    </form>
+</li>
             </ul>
         </li>
     </ul>
@@ -49,6 +58,8 @@
                         <i class="fas fa-home me-2"></i> Dashboard
                     </a>
 
+                      {{-- ================= ADMIN ================= --}}
+                @if(auth()->user()->role == 'admin')
                     <a class="nav-link" href="{{ route('buku.index') }}">
                         <i class="fas fa-book me-2"></i> Buku
                     </a>
@@ -60,6 +71,32 @@
                     <a class="nav-link" href="{{ route('kategori.index') }}">
                         <i class="fas fa-tags me-2"></i> Kategori
                     </a>
+                @endif
+
+
+                {{-- ================= PETUGAS ================= --}}
+                @if(auth()->user()->role == 'petugas')
+                    <a class="nav-link" href="{{ route('buku.index') }}">
+                        <i class="fas fa-book me-2"></i> Buku
+                    </a>
+
+                    <a class="nav-link" href="{{ route('peminjaman.index') }}">
+                        <i class="fas fa-exchange-alt me-2"></i> Peminjaman
+                    </a>
+                @endif
+
+
+                {{-- ================= ANGGOTA ================= --}}
+                @if(auth()->user()->role == 'anggota')
+                    <a class="nav-link" href="/katalog">
+                        <i class="fas fa-book-open me-2"></i> Katalog
+                    </a>
+
+                    <a class="nav-link" href="/riwayat">
+                        <i class="fas fa-history me-2"></i> Riwayat
+                    </a>
+                @endif
+
 
                 </div>
             </div>

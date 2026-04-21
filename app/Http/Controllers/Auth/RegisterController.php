@@ -28,7 +28,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+  
 
     /**
      * Create a new controller instance.
@@ -54,6 +54,16 @@ class RegisterController extends Controller
         ]);
     }
 
+    protected function registered($request, $user)
+{
+    if ($user->role == 'admin') {
+        return redirect('/home');
+    } elseif ($user->role == 'petugas') {
+        return redirect('/peminjaman');
+    } else {
+        return redirect('/katalog');
+    }
+}
     /**
      * Create a new user instance after a valid registration.
      *
@@ -65,6 +75,7 @@ class RegisterController extends Controller
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'role' => 'anggota',
         ]);
     }
 }

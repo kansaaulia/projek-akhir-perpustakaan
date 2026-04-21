@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use App\Models\User;
+use App\Models\Buku;
+use App\Models\Peminjaman;
 class HomeController extends Controller
 {
     /**
@@ -21,8 +23,20 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
-    {
-        return view('home');
+  public function index()
+{
+    if (auth()->user()->role == 'admin') {
+
+        $users = User::all(); 
+        $buku = Buku::count();
+        $peminjaman = Peminjaman::count();
+
+        return view('pages.admin.index', compact('users','buku','peminjaman'));
+
+    } elseif (auth()->user()->role == 'petugas') {
+        return redirect('/peminjaman');
+    } else {
+        return redirect('/katalog');
     }
+}
 }

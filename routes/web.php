@@ -9,16 +9,37 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\AnggotaController;
 use App\Http\Controllers\PeminjamanController;
-
+use App\Http\Controllers\UserController;
 
 Auth::routes();
 
-Route::group(['middleware' => 'auth'], function () {
-    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-    Route::resource('/admin',   App\Http\Controllers\AdminController::class);
-    Route::resource('/anggota', App\Http\Controllers\AnggotaController::class);
-    Route::resource('/buku', App\Http\Controllers\BukuController::class);
-    Route::resource('/kategori', App\Http\Controllers\KategoriController::class);
-    Route::resource('/peminjaman', App\Http\Controllers\PeminjamanController::class);
+
+// ================= SEMUA USER (LOGIN) =================
+Route::group(['middleware' => ['auth']], function () {
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
 });
 
+
+// ================= ADMIN =================
+Route::group(['middleware' => ['auth','role:admin']], function () {
+    Route::resource('/admin', AdminController::class);
+    Route::resource('/anggota', AnggotaController::class);
+    Route::resource('/kategori', KategoriController::class);
+    Route::resource('/buku', BukuController::class);
+});
+
+
+// ================= PETUGAS =================
+Route::group(['middleware' => ['auth','role:petugas']], function () {
+    Route::resource('/buku', BukuController::class)->except(['destroy']);
+    Route::resource('/peminjaman', PeminjamanController::class);
+    Route::get('/peminjaman/kembali/{id}', [PeminjamanController::class, 'kembali'])
+    ->middleware(['auth','role:petugas']);
+});
+
+
+// ================= ANGGOTA =================
+Route::group(['middleware' => ['auth','role:anggota']], function () {
+    Route::get('/katalog', [UserController::class, 'katalog'])->name('katalog');
+    Route::get('/riwayat', [UserController::class, 'riwayat'])->name('riwayat');
+});
