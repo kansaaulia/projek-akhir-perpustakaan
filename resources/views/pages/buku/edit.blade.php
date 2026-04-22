@@ -49,6 +49,14 @@
                     @enderror
                 </div>
 
+                <div class="mb-3">
+    <label>Cover</label><br>
+    @if($buku->cover)
+        <img src="{{ asset('storage/cover/'.$buku->cover) }}" width="80" class="mb-2"><br>
+    @endif
+    <input type="file" name="cover" class="form-control">
+</div>
+
                 {{-- PENULIS --}}
                 <div class="form-group mb-3">
                     <label class="form-label">Penulis</label>

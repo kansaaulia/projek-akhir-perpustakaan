@@ -17,6 +17,18 @@
             <th>Judul</th>
             <td>{{ $buku->judul }}</td>
         </tr>
+
+         <tr>
+                <th>Cover</th>
+                <td>
+                    @if ($buku->cover)
+                        <img src="{{ asset('storage/cover/'.$buku->cover) }}" width="120">
+                    @else
+                        -
+                    @endif
+                </td>
+            </tr>
+            
         <tr>
             <th>Kategori</th>
             <td>{{ $buku->kategori->nama_kategori ?? '-' }}</td>

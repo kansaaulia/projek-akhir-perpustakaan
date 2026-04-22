@@ -23,7 +23,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('buku.store') }}" method="POST">
+          <form action="{{ route('buku.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
 
                 {{-- KODE BUKU --}}
@@ -36,6 +36,15 @@
 
                     @error('kode_buku')
                         <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="mb-3">
+                    <label for="cover" class="form-label">Cover</label>
+                    <input type="file" name="cover" id="cover"
+                        class="form-control">
+                    @error('cover')
+                        <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>
 

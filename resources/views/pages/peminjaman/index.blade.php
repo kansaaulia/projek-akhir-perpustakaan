@@ -61,15 +61,7 @@
                             {{ $p->tanggal_kembali ?? '-' }}
                         </td>
 
-                                            <td>
-                        @if($p->denda > 0)
-                            <span class="text-danger fw-bold">
-                                Rp {{ number_format($p->denda) }}
-                            </span>
-                        @else
-                            -
-                        @endif
-                    </td>
+                                        
 
                         <td class="text-center">
                             @if($p->status == 'dipinjam')
@@ -78,6 +70,16 @@
                                 <span class="badge bg-success">Dikembalikan</span>
                             @endif
                         </td>
+
+                            <td>
+                        @if($p->denda > 0)
+                            <span class="text-danger fw-bold">
+                                Rp {{ number_format($p->denda) }}
+                            </span>
+                        @else
+                            -
+                        @endif
+                    </td>
 
                         <td class="text-center">
                             @if($p->status == 'dipinjam')

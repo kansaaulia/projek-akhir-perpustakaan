@@ -20,6 +20,7 @@
                     <th>No</th>
                     <th>Kode Buku</th>
                     <th>Judul</th>
+                    <th>Cover</th>
                     <th>Kategori</th>
                     <th>Penulis</th>
                     <th>Tahun</th>
@@ -34,6 +35,13 @@
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $item->kode_buku }}</td>
                     <td>{{ $item->judul }}</td>
+                    <td class="text-center">
+    @if($item->cover)
+        <img src="{{ asset('cover/'.$item->cover) }}" width="60" class="rounded shadow">
+    @else
+        <span class="text-muted">Tidak ada</span>
+    @endif
+</td>
                     <td>{{ $item->kategori->nama_kategori ?? '-' }}</td>
                     <td>{{ $item->penulis }}</td>
                     <td>{{ $item->tahun_terbit }}</td>

@@ -29,6 +29,7 @@ class PeminjamanController extends Controller
         $request->validate([
             'anggota_id' => 'required',
             'buku_id' => 'required',
+             'tanggal_pinjam' => 'required|date',
         ]);
 
         $buku = Buku::find($request->buku_id);
@@ -40,7 +41,7 @@ class PeminjamanController extends Controller
         Peminjaman::create([
             'anggota_id' => $request->anggota_id,
             'buku_id' => $request->buku_id,
-            'tanggal_pinjam' => now(),
+           'tanggal_pinjam' => $request->tanggal_pinjam,
             'status' => 'dipinjam',
             
         ]);
@@ -50,8 +51,7 @@ class PeminjamanController extends Controller
         return redirect('/peminjaman')->with('success', 'Berhasil meminjam buku!');
     }
 
-    use Carbon\Carbon;
-
+    
 public function kembali($id)
 {
     $p = Peminjaman::find($id);
