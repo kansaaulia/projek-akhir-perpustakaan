@@ -20,7 +20,7 @@
                      style="height:200px;">
             @endif
 
-            <div class="card-body">
+            <div class="card-body d-flex flex-column">
                 <h6 class="fw-bold">{{ $item->judul }}</h6>
                 <small class="text-muted">{{ $item->penulis }}</small>
 
@@ -32,13 +32,31 @@
 
                 <div class="mt-2">
                     @if($item->stok > 0)
-                        <span class="text-success">Tersedia</span>
+                        <span class="text-success">Tersedia ({{ $item->stok }})</span>
                     @else
                         <span class="text-danger">Habis</span>
                     @endif
                 </div>
-            </div>
 
+                {{-- BUTTON PINJAM --}}
+                <div class="mt-auto pt-3">
+                    @if($item->stok > 0)
+                        <form action="{{ route('pinjam.buku') }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="buku_id" value="{{ $item->id }}">
+
+                            <button type="submit" class="btn btn-primary btn-sm w-100">
+                                Pinjam
+                            </button>
+                        </form>
+                    @else
+                        <button class="btn btn-secondary btn-sm w-100" disabled>
+                            Stok Habis
+                        </button>
+                    @endif
+                </div>
+
+            </div>
         </div>
     </div>
     @endforeach

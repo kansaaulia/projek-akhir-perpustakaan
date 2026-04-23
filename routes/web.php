@@ -33,13 +33,15 @@ Route::group(['middleware' => ['auth','role:admin']], function () {
 Route::group(['middleware' => ['auth','role:petugas']], function () {
     Route::resource('/buku', BukuController::class)->except(['destroy']);
     Route::resource('/peminjaman', PeminjamanController::class);
-    Route::get('/peminjaman/kembali/{id}', [PeminjamanController::class, 'kembali'])
-    ->middleware(['auth','role:petugas']);
+    Route::get('/peminjaman/kembali/{id}', [PeminjamanController::class, 'kembali']);
+    Route::get('/peminjaman/approve/{id}', [PeminjamanController::class, 'approve']);
+    
 });
 
 
 // ================= ANGGOTA =================
 Route::group(['middleware' => ['auth','role:anggota']], function () {
     Route::get('/katalog', [UserController::class, 'katalog'])->name('katalog');
+    Route::post('/pinjam', [UserController::class, 'pinjam'])->name('pinjam.buku');
     Route::get('/riwayat', [UserController::class, 'riwayat'])->name('riwayat');
 });

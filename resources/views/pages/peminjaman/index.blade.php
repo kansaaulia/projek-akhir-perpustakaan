@@ -61,41 +61,53 @@
                             {{ $p->tanggal_kembali ?? '-' }}
                         </td>
 
-                                        
-
+                        {{-- STATUS --}}
                         <td class="text-center">
-                            @if($p->status == 'dipinjam')
+                            @if($p->status == 'menunggu')
+                                <span class="badge bg-secondary">Menunggu</span>
+                            @elseif($p->status == 'dipinjam')
                                 <span class="badge bg-warning text-dark">Dipinjam</span>
                             @else
                                 <span class="badge bg-success">Dikembalikan</span>
                             @endif
                         </td>
 
-                            <td>
-                        @if($p->denda > 0)
-                            <span class="text-danger fw-bold">
-                                Rp {{ number_format($p->denda) }}
-                            </span>
-                        @else
-                            -
-                        @endif
-                    </td>
-
+                        {{-- DENDA --}}
                         <td class="text-center">
-                            @if($p->status == 'dipinjam')
-                                <a href="/peminjaman/kembali/{{ $p->id }}"
+                            @if($p->denda > 0)
+                                <span class="text-danger fw-bold">
+                                    Rp {{ number_format($p->denda) }}
+                                </span>
+                            @else
+                                -
+                            @endif
+                        </td>
+
+                        {{-- AKSI --}}
+                        <td class="text-center">
+
+                            @if($p->status == 'menunggu')
+                                <a href="/peminjaman/approve/{{ $p->id }}" 
                                    class="btn btn-success btn-sm">
+                                   Setujui
+                                </a>
+
+                            @elseif($p->status == 'dipinjam')
+                                <a href="/peminjaman/kembali/{{ $p->id }}"
+                                   class="btn btn-primary btn-sm">
                                    Kembalikan
                                 </a>
+
                             @else
                                 <span class="text-muted">Selesai</span>
                             @endif
+
                         </td>
                     </tr>
 
                     @empty
                     <tr>
-                        <td colspan="7" class="text-center">
+                        <td colspan="8" class="text-center">
                             Belum ada data peminjaman
                         </td>
                     </tr>

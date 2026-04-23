@@ -78,4 +78,16 @@ public function kembali($id)
 
     return back()->with('success', 'Buku dikembalikan. Denda: Rp ' . number_format($denda));
 }
+
+public function approve($id)
+{
+    $p = Peminjaman::find($id);
+
+    $p->status = 'dipinjam';
+    $p->save();
+
+    $p->buku->decrement('stok');
+
+    return back()->with('success', 'Peminjaman disetujui');
+}
 }

@@ -22,4 +22,16 @@ class UserController extends Controller
 
         return view('pages.user.riwayat', compact('peminjaman'));
     }
+
+    public function pinjam(Request $request)
+{
+    Peminjaman::create([
+        'anggota_id' => auth()->id(),
+        'buku_id' => $request->buku_id,
+        'tanggal_pinjam' => now(),
+        'status' => 'menunggu'
+    ]);
+
+    return back()->with('success', 'Request peminjaman berhasil!');
+}
 }
