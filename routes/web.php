@@ -25,13 +25,17 @@ Route::group(['middleware' => ['auth','role:admin']], function () {
     Route::resource('/admin', AdminController::class);
     Route::resource('/anggota', AnggotaController::class);
     Route::resource('/kategori', KategoriController::class);
+   
+});
+
+// ================= ADMIN + PETUGAS =================
+Route::group(['middleware' => ['auth','role:admin,petugas']], function () {
     Route::resource('/buku', BukuController::class);
 });
 
-
 // ================= PETUGAS =================
 Route::group(['middleware' => ['auth','role:petugas']], function () {
-    Route::resource('/buku', BukuController::class)->except(['destroy']);
+  
     Route::resource('/peminjaman', PeminjamanController::class);
     Route::get('/peminjaman/kembali/{id}', [PeminjamanController::class, 'kembali']);
     Route::get('/peminjaman/approve/{id}', [PeminjamanController::class, 'approve']);

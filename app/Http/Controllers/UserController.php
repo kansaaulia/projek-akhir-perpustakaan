@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Http\Request;
 use App\Models\Buku;
 use App\Models\Peminjaman;
 use Illuminate\Support\Facades\Auth;

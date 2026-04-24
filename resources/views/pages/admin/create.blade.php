@@ -41,6 +41,16 @@
                         @enderror
                     </div>
 
+                    <div class="mb-3">
+    <label>Role</label>
+    <select name="role" class="form-control">
+        <option value="">-- Pilih Role --</option>
+        <option value="admin">Admin</option>
+        <option value="petugas">Petugas</option>
+        <option value="anggota">Anggota</option>
+    </select>
+</div>
+
                     <button type="submit" class="btn btn-primary"><span class="fa fa-plus">Simpan</span></button>
 
                     <a href="{{ route('admin.index') }}" class="btn btn-secondary ms-2">Batal</a>

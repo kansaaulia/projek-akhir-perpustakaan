@@ -21,6 +21,7 @@
                     <th>Nama</th>
                     <th>NIS</th>
                     <th>Kelas</th>
+                    <th>Alamat</th>
                     <th>No Telp</th>
                     <th>Aksi</th>
                 </tr>
@@ -33,6 +34,7 @@
                     <td>{{ $item->nama }}</td>
                     <td>{{ $item->nis_nim }}</td>
                     <td>{{ $item->kelas }}</td>
+                    <td>{{ $item->alamat }}</td>
                     <td>{{ $item->no_telepon }}</td>
                     <td>
 

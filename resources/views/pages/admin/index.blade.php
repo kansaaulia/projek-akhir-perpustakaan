@@ -18,6 +18,7 @@
                             <th>No</th>
                             <th>Nama Admin</th>
                             <th>Email</th>
+                            <th>Role</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -27,6 +28,7 @@
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $item->name }}</td>
                                 <td>{{ $item->email }}</td>
+                                <td>{{ $item->role }}</td>
                                 <td>
                                     {{-- @if($item->id == 1)
                                         <span class="text-muted">Tidak dapat diubah</span>
