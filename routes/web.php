@@ -16,7 +16,7 @@ Auth::routes();
 
 // ================= SEMUA USER (LOGIN) =================
 Route::group(['middleware' => ['auth']], function () {
-    Route::get('/home', [HomeController::class, 'index'])->name('home');
+   Route::get('/home', [AdminController::class, 'dashboard'])->name('home');
 });
 
 
@@ -25,6 +25,7 @@ Route::group(['middleware' => ['auth','role:admin']], function () {
     Route::resource('/admin', AdminController::class);
     Route::resource('/anggota', AnggotaController::class);
     Route::resource('/kategori', KategoriController::class);
+     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
    
 });
 

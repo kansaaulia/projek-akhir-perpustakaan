@@ -4,93 +4,126 @@
 
 @section('content')
 
-<div class="pt-2 pb-4">
-    <h3 class="fw-bold mb-3">Data Buku</h3>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="fw-bold mb-0">Data Buku</h3>
+        <small class="text-muted">Manajemen koleksi buku</small>
+    </div>
+
+    <a href="{{ route('buku.create') }}" class="btn btn-primary shadow-sm">
+        <i class="fas fa-plus me-2"></i> Tambah Buku
+    </a>
 </div>
 
-<a href="{{ route('buku.create') }}" class="btn btn-primary mb-3">
-    <span class="fas fa-plus"></span> Tambah Buku
-</a>
+<div class="card shadow-sm border-0">
+    <div class="card-body">
 
-<div class="card card-body">
-    <div class="table-responsive">
-        <table class="table table-hover datatable">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Kode Buku</th>
-                    <th>Judul</th>
-                    <th>Cover</th>
-                    <th>Kategori</th>
-                    <th>Penulis</th>
-                    <th>Tahun</th>
-                    <th>Stok</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle datatable mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th width="50">No</th>
+                        <th>Kode</th>
+                        <th>Judul</th>
+                        <th class="text-center">Cover</th>
+                        <th>Kategori</th>
+                        <th>Penulis</th>
+                        <th>Tahun</th>
+                        <th>Stok</th>
+                        <th class="text-center" width="170">Aksi</th>
+                    </tr>
+                </thead>
 
-            <tbody>
-                @foreach ($buku as $item)
-                <tr>
-                    <td>{{ $loop->iteration }}</td>
-                    <td>{{ $item->kode_buku }}</td>
-                    <td>{{ $item->judul }}</td>
-                    <td class="text-center">
-    @if($item->cover)
-        <img src="{{ asset('cover/'.$item->cover) }}" width="60" class="rounded shadow">
-    @else
-        <span class="text-muted">Tidak ada</span>
-    @endif
-</td>
-                    <td>{{ $item->kategori->nama_kategori ?? '-' }}</td>
-                    <td>{{ $item->penulis }}</td>
-                    <td>{{ $item->tahun_terbit }}</td>
-                    <td>
-                        @if ($item->stok > 0)
-                            <span class="badge bg-success">Tersedia ({{ $item->stok }})</span>
-                        @else
-                            <span class="badge bg-danger">Habis</span>
-                        @endif
-                    </td>
+                <tbody>
+                    @forelse ($buku as $item)
+                    <tr>
+                        <td class="fw-semibold">{{ $loop->iteration }}</td>
 
-                    <td>
+                        <td>
+                            <span class="badge bg-secondary">
+                                {{ $item->kode_buku }}
+                            </span>
+                        </td>
 
-                        <a href="{{ route('buku.show', $item->id) }}" 
-                           class="btn text-info btn-link py-0 px-2 text-decoration-none">
-                            <span class="fas fa-eye"></span> Detail
-                        </a>
+                        <td class="fw-semibold">
+                            {{ $item->judul }}
+                        </td>
 
-                        <a href="{{ route('buku.edit', $item->id) }}" 
-                           class="btn text-primary btn-link py-0 px-2 text-decoration-none">
-                            <span class="fas fa-edit"></span> Edit
-                        </a>
+                        <td class="text-center">
+                            @if($item->cover)
+                                <img src="{{ asset('cover/'.$item->cover) }}"
+                                     width="50"
+                                     class="rounded shadow-sm">
+                            @else
+                                <span class="text-muted small">Tidak ada</span>
+                            @endif
+                        </td>
 
-                        <form action="{{ route('buku.destroy', $item->id) }}" method="POST" style="display:inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" 
-                                onclick="return confirm('Yakin mau hapus?')" 
-                                style="color:red; border:none; background:none;">
-                                Hapus
+                        <td>
+                            <i class="fas fa-tag text-primary me-1"></i>
+                            {{ $item->kategori->nama_kategori ?? '-' }}
+                        </td>
+
+                        <td>{{ $item->penulis }}</td>
+
+                        <td>
+                            <span class="badge bg-light text-dark">
+                                {{ $item->tahun_terbit }}
+                            </span>
+                        </td>
+
+                        <td>
+                            @if ($item->stok > 0)
+                                <span class="badge bg-success">
+                                    <i class="fas fa-check-circle me-1"></i>
+                                    {{ $item->stok }}
+                                </span>
+                            @else
+                                <span class="badge bg-danger">
+                                    <i class="fas fa-times-circle me-1"></i>
+                                    Habis
+                                </span>
+                            @endif
+                        </td>
+
+                        <td class="text-center">
+
+                            <!-- DETAIL -->
+                            <a href="{{ route('buku.show', $item->id) }}"
+                               class="btn btn-sm btn-info text-white me-1">
+                                <i class="fas fa-eye"></i>
+                            </a>
+
+                            <!-- EDIT -->
+                            <a href="{{ route('buku.edit', $item->id) }}"
+                               class="btn btn-sm btn-warning text-white me-1">
+                                <i class="fas fa-edit"></i>
+                            </a>
+
+                            <!-- DELETE -->
+                            <button onclick="actionToDelete('{{ route('buku.destroy', $item->id) }}')"
+                                    class="btn btn-sm btn-danger">
+                                <i class="fas fa-trash"></i>
                             </button>
-                        </form>
 
-                    </td>
-                </tr>
-                @endforeach
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="9" class="text-center py-4 text-muted">
+                            <i class="fas fa-book-open fa-2x mb-2"></i><br>
+                            Data buku masih kosong
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
 
-                @if($buku->isEmpty())
-                <tr>
-                    <td colspan="8" class="text-center">Data kosong</td>
-                </tr>
-                @endif
-
-            </tbody>
-        </table>
     </div>
 </div>
 
-{{-- FORM DELETE --}}
+{{-- FORM DELETE GLOBAL --}}
 <form method="POST" id="form-delete">
     @csrf
     @method('DELETE')
@@ -98,13 +131,17 @@
 
 @endsection
 
+
 @push('scripts')
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="{{ asset('/js/plugin/datatables/datatables.min.js') }}"></script>
 <script src="{{ asset('/js/plugin/sweetalert/sweetalert.min.js') }}"></script>
 
 <script>
     $(function() {
-        $('.datatable').DataTable();
+        $('.datatable').DataTable({
+            responsive: true
+        });
     });
 
     function actionToDelete(url) {
@@ -114,10 +151,10 @@
             icon: "warning",
             buttons: ["Batal", "Hapus"],
             dangerMode: true,
-        }).then((confirm) => {
-            if (confirm) {
-                $('#form-delete').attr('action', url);
-                $('#form-delete').submit();
+        }).then((willDelete) => {
+            if (willDelete) {
+                document.getElementById('form-delete').action = url;
+                document.getElementById('form-delete').submit();
             }
         });
     }
@@ -126,11 +163,10 @@
 @if(session('success'))
 <script>
     swal({
-        title: "Sukses",
+        title: "Berhasil",
         text: "{{ session('success') }}",
         icon: "success",
     });
 </script>
 @endif
-
 @endpush

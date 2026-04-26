@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Buku;
+use App\Models\Anggota;
+use App\Models\Peminjaman;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -35,17 +38,6 @@ class AdminController extends Controller
             'email' => 'required|string|email|unique:users',
             'password' => 'required|string|min:6|confirmed|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/',
             'role' => 'required|in:admin,petugas,anggota',
-        ], [
-            'name.required' => 'Nama wajib diisi.',
-            'email.required' => 'Email wajib diisi.',
-            'email.email' => 'Format email tidak valid.',
-            'email.unique' => 'Email sudah terdaftar.',
-            'password.required' => 'Password wajib diisi.',
-            'password.min' => 'Password minimal 6 karakter.',
-            'password.confirmed' => 'Konfirmasi password tidak cocok.',
-            'password.regex' => 'Password harus mengandung huruf besar, huruf kecil, dan angka.',
-            'role.required' => 'Role wajib dipilih.',
-            'role.in' => 'Role tidak valid.',
         ]);
 
         User::create([
@@ -89,22 +81,10 @@ class AdminController extends Controller
             'email' => 'required|string|email|unique:users,email,' . $user->id,
             'password' => 'nullable|string|min:6|confirmed|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/',
             'role' => 'required|in:admin,petugas,anggota',
-        ], [
-            'name.required' => 'Nama wajib diisi.',
-            'email.required' => 'Email wajib diisi.',
-            'email.email' => 'Format email tidak valid.',
-            'email.unique' => 'Email sudah terdaftar.',
-            'password.min' => 'Password minimal 6 karakter.',
-            'password.confirmed' => 'Konfirmasi password tidak cocok.',
-            'password.regex' => 'Password harus mengandung huruf besar, huruf kecil, dan angka.',
-            'role.required' => 'Role wajib dipilih.',
-            'role.in' => 'Role tidak valid.',
         ]);
 
-        // ambil data
         $data = $request->only('name', 'email', 'role');
 
-        // update password kalau diisi
         if ($request->filled('password')) {
             $data['password'] = Hash::make($request->password);
         }
@@ -122,7 +102,6 @@ class AdminController extends Controller
     {
         $user = User::findOrFail($id);
 
-        // cegah hapus diri sendiri
         if ($user->id == auth()->id()) {
             return back()->with('error', 'Tidak bisa hapus akun sendiri');
         }
@@ -131,5 +110,64 @@ class AdminController extends Controller
 
         return redirect()->route('admin.index')
             ->with('success', 'Data berhasil dihapus');
+    }
+
+    /**
+     * Dashboard
+     */
+    public function dashboard()
+    {
+        // ================= CHART PEMINJAMAN =================
+        $data = array_fill(1, 12, 0);
+
+        $result = Peminjaman::selectRaw('MONTH(tanggal_pinjam) as bulan, COUNT(*) as total')
+            ->groupBy('bulan')
+            ->get();
+
+        foreach ($result as $r) {
+            $data[$r->bulan] = $r->total;
+        }
+
+        $peminjamanChart = array_values($data);
+
+
+        // ================= CHART PENGEMBALIAN =================
+        $data2 = array_fill(1, 12, 0);
+
+        $result2 = Peminjaman::selectRaw('MONTH(tanggal_kembali) as bulan, COUNT(*) as total')
+            ->whereNotNull('tanggal_kembali')
+            ->groupBy('bulan')
+            ->get();
+
+        foreach ($result2 as $r) {
+            $data2[$r->bulan] = $r->total;
+        }
+
+        $pengembalianChart = array_values($data2);
+
+
+        // ================= STATISTIK =================
+        $totalBuku = Buku::count();
+        $totalAnggota = Anggota::count();
+        $dipinjam = Peminjaman::where('status', 'dipinjam')->count();
+        $belumKembali = Peminjaman::whereNull('tanggal_kembali')->count();
+
+
+        // ================= DATA TABEL =================
+        $peminjaman = Peminjaman::with('anggota', 'buku')
+            ->latest()
+            ->take(10)
+            ->get();
+
+
+        return view('pages.dashboard', compact(
+            'peminjamanChart',
+            'pengembalianChart',
+            'totalBuku',
+            'totalAnggota',
+            'dipinjam',
+            'belumKembali',
+            'peminjaman'
+        ));
     }
 }

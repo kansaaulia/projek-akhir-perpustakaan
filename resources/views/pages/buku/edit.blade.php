@@ -21,7 +21,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('buku.update', $buku->id) }}" method="POST">
+           <form action="{{ route('buku.update', $buku->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 
@@ -49,10 +49,10 @@
                     @enderror
                 </div>
 
-                <div class="mb-3">
+            <div class="mb-3">
     <label>Cover</label><br>
     @if($buku->cover)
-        <img src="{{ asset('storage/cover/'.$buku->cover) }}" width="80" class="mb-2"><br>
+        <img src="{{ asset('public/storage/cover/'.$buku->cover) }}" width="80" class="mb-2"><br>
     @endif
     <input type="file" name="cover" class="form-control">
 </div>
