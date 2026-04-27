@@ -106,10 +106,11 @@ class BukuController extends Controller
 
     public function destroy(string $id)
 {
+    
     // 🔒 hanya admin yang boleh hapus
-    if (auth()->user()->role !== 'admin') {
-        abort(403, 'Hanya admin yang bisa menghapus buku');
-    }
+   if (!in_array(auth()->user()->role, ['admin'])) {
+    abort(403, 'Hanya admin yang bisa menghapus buku');
+}
 
     $buku = Buku::findOrFail($id);
 

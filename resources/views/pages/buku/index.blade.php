@@ -101,8 +101,10 @@
                             </a>
 
                             <!-- DELETE -->
-                            <button onclick="actionToDelete('{{ route('buku.destroy', $item->id) }}')"
-                                    class="btn btn-sm btn-danger">
+                            <button type="button"
+                                    onclick="confirmDelete(this)"
+                                    data-url="{{ route('buku.destroy', $item->id) }}"
+                                    class="btn btn-danger btn-sm">
                                 <i class="fas fa-trash"></i>
                             </button>
 
@@ -123,50 +125,52 @@
     </div>
 </div>
 
-{{-- FORM DELETE GLOBAL --}}
-<form method="POST" id="form-delete">
-    @csrf
-    @method('DELETE')
-</form>
-
 @endsection
 
 
+{{-- ================= SCRIPT SECTION ================= --}}
 @push('scripts')
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="{{ asset('/js/plugin/datatables/datatables.min.js') }}"></script>
-<script src="{{ asset('/js/plugin/sweetalert/sweetalert.min.js') }}"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-    $(function() {
-        $('.datatable').DataTable({
-            responsive: true
-        });
-    });
+function confirmDelete(button) {
+    let url = button.getAttribute('data-url');
 
-    function actionToDelete(url) {
-        swal({
-            title: "Yakin?",
-            text: "Data akan dihapus permanen!",
-            icon: "warning",
-            buttons: ["Batal", "Hapus"],
-            dangerMode: true,
-        }).then((willDelete) => {
-            if (willDelete) {
-                document.getElementById('form-delete').action = url;
-                document.getElementById('form-delete').submit();
-            }
-        });
-    }
+    Swal.fire({
+        title: 'Yakin hapus data?',
+        text: "Data buku akan dihapus permanen!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Ya, hapus!',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+
+            let form = document.createElement('form');
+            form.method = 'POST';
+            form.action = url;
+
+            let csrf = document.createElement('input');
+            csrf.type = 'hidden';
+            csrf.name = '_token';
+            csrf.value = '{{ csrf_token() }}';
+
+            let method = document.createElement('input');
+            method.type = 'hidden';
+            method.name = '_method';
+            method.value = 'DELETE';
+
+            form.appendChild(csrf);
+            form.appendChild(method);
+
+            document.body.appendChild(form);
+            form.submit();
+        }
+    });
+}
 </script>
 
-@if(session('success'))
-<script>
-    swal({
-        title: "Berhasil",
-        text: "{{ session('success') }}",
-        icon: "success",
-    });
-</script>
-@endif
 @endpush

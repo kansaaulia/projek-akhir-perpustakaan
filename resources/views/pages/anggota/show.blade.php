@@ -46,14 +46,7 @@
                     Kembali
                 </a>
 
-                <a href="{{ route('anggota.edit', $anggota->id) }}" class="btn btn-outline-primary">
-                    Edit
-                </a>
-
-                <button onclick="actionToDelete('{{ route('anggota.destroy', $anggota->id) }}')" 
-                    class="btn btn-danger">
-                    Hapus
-                </button>
+                
             </div>
         </div>
     </div>

@@ -1,7 +1,9 @@
 @extends('layouts.sbadmin')
+
 @section('title', 'Edit Buku')
 
 @section('content')
+
 <div class="pt-2 pb-3">
     <h3 class="fw-bold">Edit Buku</h3>
 </div>
@@ -21,84 +23,82 @@
                 </div>
             @endif
 
-           <form action="{{ route('buku.update', $buku->id) }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('buku.update', $buku->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 
                 {{-- KODE BUKU --}}
-                <div class="form-group mb-3">
-                    <label class="form-label">Kode Buku</label>
+                <div class="mb-3">
+                    <label>Kode Buku</label>
                     <input type="text" name="kode_buku"
                         value="{{ old('kode_buku', $buku->kode_buku) }}"
-                        class="form-control @error('kode_buku') is-invalid @enderror">
-
-                    @error('kode_buku')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
+                        class="form-control">
                 </div>
 
                 {{-- JUDUL --}}
-                <div class="form-group mb-3">
-                    <label class="form-label">Judul</label>
+                <div class="mb-3">
+                    <label>Judul</label>
                     <input type="text" name="judul"
                         value="{{ old('judul', $buku->judul) }}"
-                        class="form-control @error('judul') is-invalid @enderror">
-
-                    @error('judul')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
+                        class="form-control">
                 </div>
 
-            <div class="mb-3">
-    <label>Cover</label><br>
-    @if($buku->cover)
-        <img src="{{ asset('public/storage/cover/'.$buku->cover) }}" width="80" class="mb-2"><br>
-    @endif
+                {{-- COVER --}}
+                <div class="mb-3">
+    <label>Cover</label>
+
+    {{-- GAMBAR LAMA --}}
+    <div class="mb-2">
+        @if($buku->cover)
+            <img src="{{ asset('cover/'.$buku->cover) }}"
+                 width="90"
+                 class="rounded shadow-sm mb-2">
+
+            <div class="text-muted small">
+                File saat ini: {{ $buku->cover }}
+            </div>
+        @else
+            <span class="text-muted">Belum ada cover</span>
+        @endif
+    </div>
+
+    {{-- INPUT FILE BARU --}}
     <input type="file" name="cover" class="form-control">
+
+    {{-- OPTIONAL INFO --}}
+    <small class="text-muted">
+        Kosongkan jika tidak ingin mengganti cover
+    </small>
 </div>
 
                 {{-- PENULIS --}}
-                <div class="form-group mb-3">
-                    <label class="form-label">Penulis</label>
+                <div class="mb-3">
+                    <label>Penulis</label>
                     <input type="text" name="penulis"
                         value="{{ old('penulis', $buku->penulis) }}"
-                        class="form-control @error('penulis') is-invalid @enderror">
-
-                    @error('penulis')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
+                        class="form-control">
                 </div>
 
                 {{-- PENERBIT --}}
-                <div class="form-group mb-3">
-                    <label class="form-label">Penerbit</label>
+                <div class="mb-3">
+                    <label>Penerbit</label>
                     <input type="text" name="penerbit"
                         value="{{ old('penerbit', $buku->penerbit) }}"
-                        class="form-control @error('penerbit') is-invalid @enderror">
-
-                    @error('penerbit')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
+                        class="form-control">
                 </div>
 
                 {{-- TAHUN --}}
-                <div class="form-group mb-3">
-                    <label class="form-label">Tahun Terbit</label>
+                <div class="mb-3">
+                    <label>Tahun Terbit</label>
                     <input type="number" name="tahun_terbit"
                         value="{{ old('tahun_terbit', $buku->tahun_terbit) }}"
-                        class="form-control @error('tahun_terbit') is-invalid @enderror">
-
-                    @error('tahun_terbit')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
+                        class="form-control">
                 </div>
 
                 {{-- KATEGORI --}}
-                <div class="form-group mb-3">
-                    <label class="form-label">Kategori</label>
-                    <select name="kategori_id" 
-                        class="form-control @error('kategori_id') is-invalid @enderror">
-
+                <div class="mb-3">
+                    <label>Kategori</label>
+                    <select name="kategori_id" class="form-control">
                         <option value="">-- Pilih Kategori --</option>
 
                         @foreach ($kategori as $k)
@@ -108,29 +108,28 @@
                             </option>
                         @endforeach
                     </select>
-
-                    @error('kategori_id')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
                 </div>
 
                 {{-- STOK --}}
-                <div class="form-group mb-3">
-                    <label class="form-label">Stok</label>
+                <div class="mb-3">
+                    <label>Stok</label>
                     <input type="number" name="stok"
                         value="{{ old('stok', $buku->stok) }}"
-                        class="form-control @error('stok') is-invalid @enderror">
-
-                    @error('stok')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
+                        class="form-control">
                 </div>
 
-                <button type="submit" class="btn btn-primary">Simpan</button>
-                <a href="{{ route('buku.index') }}" class="btn btn-secondary ms-2">Batal</a>
+                <button type="submit" class="btn btn-primary">
+                    Simpan
+                </button>
+
+                <a href="{{ route('buku.index') }}" class="btn btn-secondary ms-2">
+                    Batal
+                </a>
 
             </form>
+
         </div>
     </div>
 </div>
+
 @endsection

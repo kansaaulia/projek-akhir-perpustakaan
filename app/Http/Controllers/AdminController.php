@@ -3,34 +3,25 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Models\Buku;
-use App\Models\Anggota;
-use App\Models\Peminjaman;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // ================= ADMIN USER =================
+
     public function index()
     {
         $users = User::all();
         return view('pages.admin.index', compact('users'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         return view('pages.admin.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -51,27 +42,18 @@ class AdminController extends Controller
             ->with('success', 'User berhasil ditambahkan.');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         $user = User::findOrFail($id);
         return view('pages.admin.show', compact('user'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
         $user = User::findOrFail($id);
         return view('pages.admin.edit', compact('user'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         $user = User::findOrFail($id);
@@ -95,9 +77,6 @@ class AdminController extends Controller
             ->with('success', 'User berhasil diperbarui.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         $user = User::findOrFail($id);
@@ -112,62 +91,47 @@ class AdminController extends Controller
             ->with('success', 'Data berhasil dihapus');
     }
 
-    /**
-     * Dashboard
-     */
+    // ================= DASHBOARD =================
+
     public function dashboard()
     {
-        // ================= CHART PEMINJAMAN =================
-        $data = array_fill(1, 12, 0);
+        // ===== STATISTIK =====
+        $totalBuku = DB::table('buku')->count();
+        $totalAnggota = DB::table('anggota')->count();
+        $totalPeminjaman = DB::table('peminjaman')->count();
+        $totalPengembalian = DB::table('peminjaman')
+            ->whereNotNull('tanggal_kembali')
+            ->count();
 
-        $result = Peminjaman::selectRaw('MONTH(tanggal_pinjam) as bulan, COUNT(*) as total')
+        // ===== PEMINJAMAN PER BULAN =====
+        $peminjaman = DB::table('peminjaman')
+            ->selectRaw('MONTH(tanggal_pinjam) as bulan, COUNT(*) as total')
             ->groupBy('bulan')
-            ->get();
+            ->pluck('total', 'bulan');
 
-        foreach ($result as $r) {
-            $data[$r->bulan] = $r->total;
-        }
-
-        $peminjamanChart = array_values($data);
-
-
-        // ================= CHART PENGEMBALIAN =================
-        $data2 = array_fill(1, 12, 0);
-
-        $result2 = Peminjaman::selectRaw('MONTH(tanggal_kembali) as bulan, COUNT(*) as total')
+        // ===== PENGEMBALIAN PER BULAN =====
+        $pengembalian = DB::table('peminjaman')
+            ->selectRaw('MONTH(tanggal_kembali) as bulan, COUNT(*) as total')
             ->whereNotNull('tanggal_kembali')
             ->groupBy('bulan')
-            ->get();
+            ->pluck('total', 'bulan');
 
-        foreach ($result2 as $r) {
-            $data2[$r->bulan] = $r->total;
+        // ===== FORMAT 12 BULAN =====
+        $peminjamanChart = [];
+        $pengembalianChart = [];
+
+        for ($i = 1; $i <= 12; $i++) {
+            $peminjamanChart[] = $peminjaman[$i] ?? 0;
+            $pengembalianChart[] = $pengembalian[$i] ?? 0;
         }
 
-        $pengembalianChart = array_values($data2);
-
-
-        // ================= STATISTIK =================
-        $totalBuku = Buku::count();
-        $totalAnggota = Anggota::count();
-        $dipinjam = Peminjaman::where('status', 'dipinjam')->count();
-        $belumKembali = Peminjaman::whereNull('tanggal_kembali')->count();
-
-
-        // ================= DATA TABEL =================
-        $peminjaman = Peminjaman::with('anggota', 'buku')
-            ->latest()
-            ->take(10)
-            ->get();
-
-
         return view('pages.dashboard', compact(
-            'peminjamanChart',
-            'pengembalianChart',
             'totalBuku',
             'totalAnggota',
-            'dipinjam',
-            'belumKembali',
-            'peminjaman'
+            'totalPeminjaman',
+            'totalPengembalian',
+            'peminjamanChart',
+            'pengembalianChart'
         ));
     }
 }

@@ -40,13 +40,30 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="cover" class="form-label">Cover</label>
-                    <input type="file" name="cover" id="cover"
-                        class="form-control">
-                    @error('cover')
-                        <div class="text-danger">{{ $message }}</div>
-                    @enderror
-                </div>
+    <label for="cover" class="form-label">Cover</label>
+
+    {{-- PREVIEW --}}
+    <div class="mb-2">
+        <img id="preview-cover"
+             src="#"
+             alt="Preview"
+             style="display:none; width:100px;"
+             class="rounded shadow-sm">
+        
+        <div id="no-preview" class="text-muted small">
+            Belum ada cover dipilih
+        </div>
+    </div>
+
+    {{-- INPUT FILE --}}
+    <input type="file" name="cover" id="cover"
+           class="form-control"
+           onchange="previewCover(event)">
+
+    @error('cover')
+        <div class="text-danger">{{ $message }}</div>
+    @enderror
+</div>
 
                 {{-- JUDUL --}}
                 <div class="form-group mb-3">
@@ -150,3 +167,24 @@
 </div>
 
 @endsection
+@push('scripts')
+<script>
+function previewCover(event) {
+    const input = event.target;
+    const preview = document.getElementById('preview-cover');
+    const noPreview = document.getElementById('no-preview');
+
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+            noPreview.style.display = 'none';
+        }
+
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+</script>
+@endpush

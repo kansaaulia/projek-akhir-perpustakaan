@@ -4,112 +4,159 @@
 
 @section('content')
 
-<div class="pt-2 pb-4">
-    <h3 class="fw-bold mb-3">Data Anggota</h3>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="fw-bold mb-0">Data Anggota</h3>
+        <small class="text-muted">Manajemen data anggota perpustakaan</small>
+    </div>
+
+    <a href="{{ route('anggota.create') }}" class="btn btn-primary shadow-sm">
+        <i class="fas fa-plus me-2"></i> Tambah Anggota
+    </a>
 </div>
 
-<a href="{{ route('anggota.create') }}" class="btn btn-primary mb-3">
-    <span class="fas fa-plus"></span> Tambah Anggota
-</a>
+<div class="card shadow-sm border-0">
+    <div class="card-body">
 
-<div class="card card-body">
-    <div class="table-responsive">
-        <table class="table table-hover datatable">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Nama</th>
-                    <th>NIS</th>
-                    <th>Kelas</th>
-                    <th>Alamat</th>
-                    <th>No Telp</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle datatable mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th width="50">No</th>
+                        <th>Nama</th>
+                        <th>NIS</th>
+                        <th>Kelas</th>
+                        <th>Alamat</th>
+                        <th>No Telp</th>
+                        <th class="text-center" width="180">Aksi</th>
+                    </tr>
+                </thead>
 
-            <tbody>
-                @foreach ($anggota as $item)
-                <tr>
-                    <td>{{ $loop->iteration }}</td>
-                    <td>{{ $item->nama }}</td>
-                    <td>{{ $item->nis_nim }}</td>
-                    <td>{{ $item->kelas }}</td>
-                    <td>{{ $item->alamat }}</td>
-                    <td>{{ $item->no_telepon }}</td>
-                    <td>
+                <tbody>
+                    @forelse ($anggota as $item)
+                    <tr>
+                        <td class="fw-semibold">{{ $loop->iteration }}</td>
 
-                        <a href="{{ route('anggota.show', $item->id) }}" 
-                           class="btn text-info btn-link py-0 px-2 text-decoration-none">
-                            <span class="fas fa-eye"></span> Detail
-                        </a>
+                        <td class="fw-semibold">
+                            {{ $item->nama }}
+                        </td>
 
-                        <a href="{{ route('anggota.edit', $item->id) }}" 
-                           class="btn text-primary btn-link py-0 px-2 text-decoration-none">
-                            <span class="fas fa-edit"></span> Edit
-                        </a>
+                        <td>
+                            <span class="badge bg-secondary">
+                                {{ $item->nis_nim }}
+                            </span>
+                        </td>
 
-                           <form action="{{ route('anggota.destroy', $item->id) }}" method="POST" style="display:inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" onclick="return confirm('Yakin mau hapus?')" style="color:red; border:none; background:none;">
-                                                Hapus
-                                            </button>
-                                        </form>
-                    </td>
-                </tr>
-                @endforeach
+                        <td>{{ $item->kelas }}</td>
 
-                @if($anggota->isEmpty())
-                <tr>
-                    <td colspan="6" class="text-center">Data kosong</td>
-                </tr>
-                @endif
+                        <td class="text-muted small">
+                            {{ $item->alamat }}
+                        </td>
 
-            </tbody>
-        </table>
+                        <td>{{ $item->no_telepon }}</td>
+
+                        <td class="text-center">
+
+                            <!-- DETAIL -->
+                            <a href="{{ route('anggota.show', $item->id) }}"
+                               class="btn btn-sm btn-info text-white me-1">
+                                <i class="fas fa-eye"></i>
+                            </a>
+
+                            <!-- EDIT -->
+                            <a href="{{ route('anggota.edit', $item->id) }}"
+                               class="btn btn-sm btn-warning text-white me-1">
+                                <i class="fas fa-edit"></i>
+                            </a>
+
+                            <!-- DELETE -->
+                            <button type="button"
+                                    onclick="confirmDelete(this)"
+                                    data-url="{{ route('anggota.destroy', $item->id) }}"
+                                    class="btn btn-danger btn-sm">
+                                <i class="fas fa-trash"></i>
+                            </button>
+
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="7" class="text-center py-4 text-muted">
+                            <i class="fas fa-users fa-2x mb-2"></i><br>
+                            Data anggota masih kosong
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
     </div>
 </div>
 
-{{-- FORM DELETE --}}
-<form method="POST" id="form-delete">
-    @csrf
-    @method('DELETE')
-</form>
-
 @endsection
-
 @push('scripts')
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="{{ asset('/js/plugin/datatables/datatables.min.js') }}"></script>
-<script src="{{ asset('/js/plugin/sweetalert/sweetalert.min.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-    $(function() {
-        $('.datatable').DataTable();
+$(function() {
+    $('.datatable').DataTable({
+        responsive: true
     });
+});
 
-    function actionToDelete(url) {
-        swal({
-            title: "Yakin?",
-            text: "Data akan dihapus permanen!",
-            icon: "warning",
-            buttons: ["Batal", "Hapus"],
-            dangerMode: true,
-        }).then((confirm) => {
-            if (confirm) {
-                $('#form-delete').attr('action', url);
-                $('#form-delete').submit();
-            }
-        });
-    }
+function confirmDelete(button) {
+    let url = button.getAttribute('data-url');
+
+    Swal.fire({
+        title: 'Yakin hapus?',
+        text: "Data anggota akan dihapus permanen!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Ya, hapus!',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+
+            let form = document.createElement('form');
+            form.method = 'POST';
+            form.action = url;
+
+            let csrf = document.createElement('input');
+            csrf.type = 'hidden';
+            csrf.name = '_token';
+            csrf.value = '{{ csrf_token() }}';
+
+            let method = document.createElement('input');
+            method.type = 'hidden';
+            method.name = '_method';
+            method.value = 'DELETE';
+
+            form.appendChild(csrf);
+            form.appendChild(method);
+
+            document.body.appendChild(form);
+            form.submit();
+        }
+    });
+}
 </script>
 
+{{-- SUCCESS ALERT --}}
 @if(session('success'))
 <script>
-    swal({
-        title: "Sukses",
-        text: "{{ session('success') }}",
-        icon: "success",
-    });
+Swal.fire({
+    icon: 'success',
+    title: 'Berhasil',
+    text: '{{ session('success') }}',
+    timer: 2000,
+    showConfirmButton: false
+});
 </script>
 @endif
 

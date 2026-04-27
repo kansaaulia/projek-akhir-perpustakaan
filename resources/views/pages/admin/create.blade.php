@@ -51,7 +51,9 @@
     </select>
 </div>
 
-                    <button type="submit" class="btn btn-primary"><span class="fa fa-plus">Simpan</span></button>
+                    <button type="submit" class="btn btn-primary shadow-sm">
+    <i class="fas fa-save me-2"></i> Simpan
+</button>
 
                     <a href="{{ route('admin.index') }}" class="btn btn-secondary ms-2">Batal</a>
                 </form>

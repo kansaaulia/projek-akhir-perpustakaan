@@ -4,14 +4,61 @@
 
 @section('content')
 
-<h3>Tambah Kategori</h3>
+<div class="pt-2 pb-3">
+    <h3 class="fw-bold">Tambah Kategori</h3>
+    <small class="text-muted">Tambahkan kategori buku baru</small>
+</div>
 
-<form action="{{ route('kategori.store') }}" method="POST">
-    @csrf
+<div class="row">
+    <div class="col-md-6">
 
-    <input type="text" name="nama_kategori" placeholder="Nama Kategori">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
 
-    <button type="submit">Simpan</button>
-</form>
+                {{-- ERROR --}}
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul class="mb-0">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                <form action="{{ route('kategori.store') }}" method="POST">
+                    @csrf
+
+                    <div class="mb-3">
+                        <label class="form-label">Nama Kategori</label>
+                        <input type="text" name="nama_kategori"
+                               value="{{ old('nama_kategori') }}"
+                               class="form-control @error('nama_kategori') is-invalid @enderror"
+                               placeholder="Contoh: Novel, Komik, Pendidikan">
+
+                        @error('nama_kategori')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i> Simpan
+                        </button>
+
+                        <a href="{{ route('kategori.index') }}" class="btn btn-secondary">
+                            Batal
+                        </a>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>
 
 @endsection
